@@ -6,12 +6,12 @@ const fs = require('fs')
 const port = process.env.PORT || 3000;
 var app = express();
 
-app.use((req, res, next) => {
-  res.render('maintenance.hbs', {
-    pageTitle: 'Maintenance is ongoing',
-    maintenanceMessage: 'Please come back in an hour.'
-  });
-});
+// app.use((req, res, next) => {
+//   res.render('maintenance.hbs', {
+//     pageTitle: 'Maintenance is ongoing',
+//     maintenanceMessage: 'Please come back in an hour.'
+//   });
+// });
 
 hbs.registerPartials(__dirname + '/views/partials');
 app.set('view engine', 'hbs');
@@ -19,13 +19,11 @@ app.use(express.static(__dirname + '/public'));
 
 app.use((req, res, next) => {
   var now = new Date().toString();
-  var log = (`${now}: ${req.method} ${req.url}`);
+  var log = (`${now}: ${req.method} ${req.url}, from ${req.ip}`);
   fs.appendFile('server.log', log + '\n');
-
+  console.log(log);
   next();
 });
-
-
 
 hbs.registerHelper('getCurrentYear', (() => {
   return new Date().getFullYear();
@@ -42,10 +40,15 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get('/project', (req, res) => {
+  res.render('project.hbs', {
+    pageTitle: 'project Page'
+  });
+})
+
 app.get('/about', (req, res) => {
   res.render('about.hbs', {
-    pageTitle: 'About Page',
-
+    pageTitle: 'About Page'
   });
 })
 
