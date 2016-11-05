@@ -6,6 +6,9 @@ const fs = require('fs')
 const port = process.env.PORT || 3000;
 var app = express();
 
+var now = new Date().toString();
+
+
 // app.use((req, res, next) => {
 //   res.render('maintenance.hbs', {
 //     pageTitle: 'Maintenance is ongoing',
@@ -18,7 +21,6 @@ app.set('view engine', 'hbs');
 app.use(express.static(__dirname + '/public'));
 
 app.use((req, res, next) => {
-  var now = new Date().toString();
   var log = (`${now}: ${req.method} ${req.url}, from ${req.ip}`);
   fs.appendFile('server.log', log + '\n');
   console.log(log);
@@ -39,6 +41,17 @@ app.get('/', (req, res) => {
     welcomeMessage: 'Hello there, I do hope you are ok. Enjoy your visit.'
   });
 });
+
+app.get('/logs', (req,res) => {
+  res.render('logs.hbs', {
+    pageTitle: 'logs',
+    date: now,
+    method: req.method,
+    ip: req.ip,
+    ips: req.ips,
+    protocol: req.protocol
+  })
+})
 
 app.get('/project', (req, res) => {
   res.render('project.hbs', {
